@@ -8,3 +8,15 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
+# Keep WebRTC classes
+-keep class org.webrtc.** { *; }
+-dontwarn org.webrtc.**
+
+# Socket.io (if you use it with WebRTC signaling)
+-keep class io.socket.** { *; }
+-dontwarn io.socket.**
+
+# For React Native JNI
+-keep class com.facebook.jni.** { *; }
+-dontwarn com.facebook.jni.**
+

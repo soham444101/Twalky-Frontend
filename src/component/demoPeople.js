@@ -1,0 +1,73 @@
+
+export const demoParticipant = [
+  {
+    id: "1",
+    name: "Soham",
+    photo: "https://randomuser.me/api/portraits/men/11.jpg",
+    isSpeaking: true,
+    micOn: false,
+  },
+  {
+    id: "2",
+    name: "Aarav",
+    photo: "https://randomuser.me/api/portraits/men/21.jpg",
+    isSpeaking: false,
+    micOn: true,
+  },
+  {
+    id: "3",
+    name: "Riya",
+    avatar: "https://randomuser.me/api/portraits/women/31.jpg",
+    isSpeaking: false,
+    micOn: false,
+  },
+  {
+    id: "4",
+    name: "Ananya",
+    avatar: "https://randomuser.me/api/portraits/women/41.jpg",
+    isSpeaking: true,
+    micOn: false,
+  },
+  {
+    id: "5",
+    name: "Soham",
+    avatar: "https://randomuser.me/api/portraits/men/11.jpg",
+    isSpeaking: true,
+    micOn: false,
+  },
+  {
+    id: "6",
+    name: "Aarav",
+    avatar: "https://randomuser.me/api/portraits/men/21.jpg",
+    isSpeaking: false,
+    micOn: true,
+  },
+  {
+    id: "7",
+    name: "Riya",
+    avatar: "https://randomuser.me/api/portraits/women/31.jpg",
+    isSpeaking: false,
+    micOn: false,
+  },
+  {
+    id: "8",
+    name: "Ananya",
+    avatar: "https://randomuser.me/api/portraits/women/41.jpg",
+    isSpeaking: true,
+    micOn: false,
+  },
+  {
+    id: "9",
+    name: "Ananya",
+    avatar: "https://randomuser.me/api/portraits/women/41.jpg",
+    isSpeaking: true,
+    micOn: false,
+  },
+  {
+    id: "10",
+    name: "Ananya",
+    avatar: "https://randomuser.me/api/portraits/women/41.jpg",
+    isSpeaking: true,
+    micOn: false,
+  },
+];
