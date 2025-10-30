@@ -1,4 +1,4 @@
-# 🎥 Twalky Meet (Frontend - React Native CLI)
+# 🎥 Twalky : Meet App (Frontend - React Native CLI)
 
 A **real-time video meeting app** built using **React Native CLI**, **WebRTC**, and **Socket.IO**.  
 It allows multiple users to join a live meeting session, toggle mic/video, and communicate peer-to-peer with minimal latency.
