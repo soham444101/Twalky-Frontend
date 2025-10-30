@@ -192,12 +192,13 @@ twalky-meet-client/
 * ⚡ Avoid duplicate SDP offers → handle via stable state check (`signalingState === "stable"`)
 ---
 
-## 👩‍💻 Developer Info
+## 📬 Contact
 
 **👩‍💻 Author:** Soham Aswar
 **📧 Email:** [sohamaswar@gmail.com](mailto:sohamaswar@gmail.com)
 **🔗 LinkedIn:** [linkedin.com/in/sohamaswar](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiu_OOsjcyQAxX0YfUHHVMJO7AQFnoECBsQAQ&url=https%3A%2F%2Fin.linkedin.com%2Fin%2Fsoham-aswar-18376b22a%3Ftrk%3Dpublic_profile_browsemap&usg=AOvVaw0ivsKXXKueS298YG0EHdQv&opi=89978449)
 
 
-⭐ **If you find this project helpful, please give it a star on GitHub!**
+⭐ **If you find this project helpful, please give it a star on GitHub!** [🔼 Back to top](#top)
+
 
