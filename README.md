@@ -1,51 +1,34 @@
-Perfect ✅ You’re using **pure React Native CLI + Socket.IO + react-native-webrtc**, not Expo —
-so here’s your **complete, production-style `README.md`** tailored to **this exact setup** (with your dependencies, commands, and step-by-step setup).
-
-Everything is cleanly formatted in Markdown with copyable commands and contact details — ready to paste into your GitHub repo 👇
-
----
-
-````markdown
 # 🎥 Twalky Meet (Frontend - React Native CLI)
 
 A **real-time video meeting app** built using **React Native CLI**, **WebRTC**, and **Socket.IO**.  
 It allows multiple users to join a live meeting session, toggle mic/video, and communicate peer-to-peer with minimal latency.
-
 ---
 
 ## 🚀 Features
 
-✅ Real-time video & audio calling via **WebRTC**  
-✅ Multi-user session management using **Socket.IO**  
-✅ Toggle mic and camera  
-✅ Camera switching (front ↔ back)  
-✅ Auto cleanup on disconnect  
-✅ Zustand-based state management  
-✅ Lightweight and production-ready architecture  
-
----
+Real-time video & audio calling via **WebRTC**  
+Multi-user session management using **Socket.IO**  
+Toggle mic and camera  
+Camera switching (front ↔ back)  
+Auto cleanup on disconnect  
+Zustand-based state management  
 
 ## 🧩 Tech Stack
 
-| Layer | Technology |
-|-------|-------------|
-| **Framework** | React Native CLI |
-| **Real-Time** | WebRTC + Socket.IO |
-| **State Management** | Zustand |
-| **UI** | React Native + Lucide Icons |
-| **Navigation** | React Navigation |
-| **Local Storage** | MMKV |
-| **Networking** | Axios |
-| **Permissions** | react-native-permissions |
 
----
+ **Framework** : React Native CLI 
+ **Real-Time** : WebRTC + Socket.IO |
+ **State Management** : Zustand 
+ **UI** : React Native + Lucide Icons 
+ **Navigation** : React Navigation 
+ **Local Storage** : MMKV 
+ **Networking** : Axios 
+ **Permissions** : react-native-permissions 
 
 ## ⚙️ Installation & Setup
 
-Follow these steps carefully 👇
-
 ### 1️⃣ Clone the Repository
-```bash
+```
 git clone https://github.com/your-username/twalky-meet-client.git
 cd twalky-meet-client
 ````
@@ -112,13 +95,6 @@ npm run android
 npm run ios
 ```
 
-> 💡 If backend runs locally on your PC, use this to connect real Android device:
-
-```bash
-adb reverse tcp:5000 tcp:5000
-```
-
----
 
 ## 🧠 WebRTC Flow
 
@@ -180,22 +156,6 @@ twalky-meet-client/
 ├── babel.config.js
 └── README.md
 ```
-
----
-
-## 🧩 Key Libraries Used
-
-| Library                        | Purpose                           |
-| ------------------------------ | --------------------------------- |
-| `react-native-webrtc`          | Real-time media stream handling   |
-| `socket.io-client`             | Real-time signaling between peers |
-| `zustand`                      | Global state store                |
-| `react-native-mmkv`            | Fast local storage                |
-| `axios`                        | API calls                         |
-| `lucide-react-native`          | Modern UI icons                   |
-| `react-native-permissions`     | Camera & mic access               |
-| `react-native-linear-gradient` | Gradient backgrounds              |
-
 ---
 
 ## 🧰 Useful Commands
@@ -205,8 +165,6 @@ twalky-meet-client/
 | `npm start`       | Start Metro bundler            |
 | `npm run android` | Run on Android device/emulator |
 | `npm run ios`     | Run on iOS                     |
-| `npm run lint`    | Check for lint issues          |
-| `npm test`        | Run unit tests                 |
 
 ---
 
@@ -214,42 +172,16 @@ twalky-meet-client/
 
 * 🧩 Run backend server before starting the client
 * 📶 Keep both backend & device on same Wi-Fi network
-* 🔄 Use `adb reverse` for localhost development
 * 🎥 Test camera/mic on physical device (emulators have limited media support)
 * ⚡ Avoid duplicate SDP offers → handle via stable state check (`signalingState === "stable"`)
-
----
-
-## 📸 Screens (Optional)
-
-| Screen              | Description                             |
-| ------------------- | --------------------------------------- |
-| 🏠 **Home Screen**  | Enter meeting ID / Join session         |
-| 🎤 **Lobby Screen** | Preview mic & camera before joining     |
-| 🎥 **Live Meeting** | Real-time multi-user video conferencing |
-
 ---
 
 ## 👩‍💻 Developer Info
 
 **👩‍💻 Author:** Soham Aswar
-**📧 Email:** [sohamaswar.dev@gmail.com](mailto:sohamaswar.dev@gmail.com)
-**🔗 LinkedIn:** [linkedin.com/in/sohamaswar](https://linkedin.com/in/sohamaswar)
+**📧 Email:** [sohamaswar@gmail.com](mailto:sohamaswar@gmail.com)
+**🔗 LinkedIn:** [linkedin.com/in/sohamaswar](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiu_OOsjcyQAxX0YfUHHVMJO7AQFnoECBsQAQ&url=https%3A%2F%2Fin.linkedin.com%2Fin%2Fsoham-aswar-18376b22a%3Ftrk%3Dpublic_profile_browsemap&usg=AOvVaw0ivsKXXKueS298YG0EHdQv&opi=89978449)
 
----
-
-## 🏁 License
-
-Licensed under the **MIT License** — you are free to use, modify, and distribute this project for learning or open-source contributions.
-
----
 
 ⭐ **If you find this project helpful, please give it a star on GitHub!**
 
-```
-
----
-
-Would you like me to now generate the **combined README** (Frontend + Backend in one file, with jump links like `#frontend` and `#backend`)?  
-That’s perfect if you plan to upload both in a single GitHub repository (`/client` + `/server`).
-```
