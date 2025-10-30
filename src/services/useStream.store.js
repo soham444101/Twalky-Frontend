@@ -97,45 +97,7 @@ export const useStreamStore = create(
             set({ stream: null, isInitializing: false });
         },
 
-        //   Added utility to check if stream is valid
-        isStreamValid: () => {
-            const current = get().stream;
-            if (!current) return false;
 
-            const audioTracks = current.getAudioTracks();
-            const videoTracks = current.getVideoTracks();
 
-            const hasValidAudio = audioTracks.length > 0 && audioTracks[0].readyState === 'live';
-            const hasValidVideo = videoTracks.length > 0 && videoTracks[0].readyState === 'live';
-
-            return hasValidAudio && hasValidVideo;
-        },
-
-        //  Added method to get track states
-        getTrackStates: () => {
-            const current = get().stream;
-            if (!current) return { audio: null, video: null };
-
-            const audioTrack = current.getAudioTracks()[0];
-            const videoTrack = current.getVideoTracks()[0];
-
-            return {
-                audio: audioTrack ? {
-                    enabled: audioTrack.enabled,
-                    readyState: audioTrack.readyState
-                } : null,
-                video: videoTrack ? {
-                    enabled: videoTrack.enabled,
-                    readyState: videoTrack.readyState
-                } : null
-            };
-        }
     })
 );
-
-// export const getStream = () => useStreamStore.getState().stream;
-// export const setStream = (stream) => useStreamStore.getState().setStream(stream);
-// export const initStream = () => useStreamStore.getState().initStream();
-// export const clearStream = () => useStreamStore.getState().clearStream();
-// export const isStreamValid = () => useStreamStore.getState().isStreamValid();
-// export const getTrackStates = () => useStreamStore.getState().getTrackStates();

@@ -9,7 +9,6 @@ import { Colors } from '../../utlities/Constant';
 import { useWS } from '../../services/api/WSProvider';
 const MeetFooter = ({ togglemic, togglevideo, hangup }) => {
   const { micOn, videoOn } = meetStore();
-  const { emit } = useWS()
 
   const getIconStyle = isActive => ({
     backgroundColor: isActive ? 'rgba(255, 255, 255, 0.1)' : '#FFFFFF',

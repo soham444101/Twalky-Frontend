@@ -9,7 +9,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useUserStore } from '../../services/useStorage.services';
 import { v4 as uuid } from "uuid";
-import { Colors } from '../../utlities/Constant';
+import { Colors, demoImage } from '../../utlities/Constant';
 import Toast from '../../utlities/Toast';
 
 
@@ -17,13 +17,13 @@ import Toast from '../../utlities/Toast';
 const InquireModel = ({ onClose, visible }) => {
     const { user, setUser } = useUserStore();
     const [nameCurrent, setName] = useState('');
-    const [profileurl, setProfileurl] = useState('https://images.pexels.com/photos/23833694/pexels-photo-23833694.jpeg');
+    const [profileurl, setProfileurl] = useState(demoImage);
 
     useEffect(() => {
         if (visible && user) {
             const { name, photo } = user;
             setName(name || '');
-            setProfileurl(photo ||'https://images.pexels.com/photos/23833694/pexels-photo-23833694.jpeg');
+            setProfileurl(photo || demoImage);
         }
     }, [visible, user]);
 

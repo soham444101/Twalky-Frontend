@@ -3,7 +3,7 @@ import React, { useState, useCallback } from 'react';
 import { RTCView } from 'react-native-webrtc';
 import { EllipsisVertical, MicOff } from 'lucide-react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { getInitials, isValidImageUrlCached } from "../../utlities/imageUrlValidater.js"
+import { getInitials } from '../../utlities/Helpers';
 
 const getGridStyle = (count, containerWidth, containerHeight) => {
     if (!containerWidth || !containerHeight) return {};
@@ -57,7 +57,7 @@ const ParticipantCard = ({ person, gridStyle, index, showOthersCount, othersCoun
     }, [person?.name]);
 
     //  Reset error when photo changes
-    React.useEffect(() => {
+    useEffect(() => {
         setImageError(false);
     }, [person?.photo]);
 
@@ -74,14 +74,14 @@ const ParticipantCard = ({ person, gridStyle, index, showOthersCount, othersCoun
                 console.log('Stream URL is string:', person.streamURL);
                 return person.streamURL;
             }
-            
+
             // If it has toURL method, call it
             if (typeof person.streamURL.toURL === 'function') {
                 const url = person.streamURL.toURL();
                 console.log('Stream URL from toURL():', url);
                 return url;
             }
-            
+
             // If it has _URL property
             if (person.streamURL._URL) {
                 console.log('Stream URL from _URL:', person.streamURL._URL);
@@ -98,7 +98,7 @@ const ParticipantCard = ({ person, gridStyle, index, showOthersCount, othersCoun
 
     const streamURL = getStreamURL();
     const shouldShowVideo = person?.videoOn && streamURL;
-    const hasValidPhoto = person?.photo && !imageError && isValidImageUrlCached(person.photo);
+    const hasValidPhoto = person?.photo && !imageError ;
 
     console.log('ParticipantCard render decision:', {
         name: person?.name,
@@ -157,26 +157,22 @@ const ParticipantCard = ({ person, gridStyle, index, showOthersCount, othersCoun
         >
             {renderContent()}
 
-            {/* Name Label */}
             <View style={peopleStyles.nameLabel}>
                 <Text style={peopleStyles.nameText} numberOfLines={1}>
                     {person?.name || 'Unknown'}
                 </Text>
             </View>
 
-            {/* Mic Off */}
             {!person?.micOn && (
                 <View style={peopleStyles.muted}>
                     <MicOff color="#fff" size={RFValue(10)} />
                 </View>
             )}
 
-            {/* Ellipsis */}
             <View style={peopleStyles.ellipsis}>
                 <EllipsisVertical color="#fff" size={RFValue(14)} />
             </View>
 
-            {/* Others Count Badge */}
             {showOthersCount && (
                 <TouchableOpacity
                     style={peopleStyles.others}
@@ -203,9 +199,7 @@ const People = ({ people, containerDimensions }) => {
             containerDimensions.height
         ) : null;
 
-    //  Debug logging
     console.log('====================================');
-    console.log("People component - Total:", people?.length || 0);
     console.log("Visible:", visiblePeoples.length);
     console.log("Container dimensions:", containerDimensions);
     visiblePeoples.forEach((person, idx) => {
@@ -213,9 +207,9 @@ const People = ({ people, containerDimensions }) => {
             userId: person?.userId,
             name: person?.name,
             hasPhoto: !!person?.photo,
-            photoValid: person?.photo ? isValidImageUrlCached(person.photo) : false,
+            photoValid: person?.photo ,
             hasStreamURL: !!person?.streamURL,
-            streamURLType: typeof person?.streamURL,
+            streamURLType: person?.streamURL,
             videoOn: person?.videoOn,
             micOn: person?.micOn,
         });

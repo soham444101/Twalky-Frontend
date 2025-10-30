@@ -10,7 +10,6 @@ const UserView = ({ containerDimensions, localStream }) => {
   const { videoOn } = meetStore();
   const { user } = useUserStore();
 
-  // Track if image failed to load
   const [imageError, setImageError] = useState(false);
 
   // Video view dimensions

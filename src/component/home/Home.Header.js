@@ -5,8 +5,7 @@ import InquireModel from './InquireModel.js';
 import { CircleUser, Menu } from "lucide-react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import { Colors } from '../../utlities/Constant.js';
-import { navigate } from '../../utlities/NavigationUtilities.js';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Homeheader = () => {
     const [visible, setVisible] = useState(false);
@@ -54,17 +53,6 @@ const styles = StyleSheet.create({
         color: Colors.text,
         fontWeight: 'bold',
     },
-    // joinButton: {
-    //     backgroundColor: Colors.primary,
-    //     paddingVertical: 6,
-    //     paddingHorizontal: 16,
-    //     borderRadius: 10,
-    //     alignItems: 'center',
-    //     justifyContent:"center",
-    // },
-    // joinText: {
-    //     color: '#fff'
-    // }
 
     inputone: {
 

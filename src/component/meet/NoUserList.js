@@ -13,7 +13,7 @@ import { Colors } from '../../utlities/Constant';
 import { addHypen } from '../../utlities/Helpers';
 
 const NoUserList = ({ sessionId }) => {
-  const inviteLink = `https://twalky.com/${addHypen(sessionId)}`;
+  const inviteLink = `${addHypen(sessionId)}`;
   console.log('====================================');
   console.log(Clipboard);
   console.log('====================================');
