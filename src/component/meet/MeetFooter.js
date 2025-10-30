@@ -5,10 +5,9 @@ import { Mic, MicOff, PhoneOff, Video, VideoOff, Hand, MoreVertical, PhoneCall }
 import { meetStore } from '../../services/meetStorage.services';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { LinearGradient } from 'react-native-linear-gradient';
-import { Color } from 'react-native/types_generated/Libraries/Animated/AnimatedExports';
 import { Colors } from '../../utlities/Constant';
 import { useWS } from '../../services/api/WSProvider';
-const MeetFooter = ({ togglemic, togglevideo }) => {
+const MeetFooter = ({ togglemic, togglevideo, hangup }) => {
   const { micOn, videoOn } = meetStore();
   const { emit } = useWS()
 
@@ -23,8 +22,8 @@ const MeetFooter = ({ togglemic, togglevideo }) => {
     console.log('====================================');
     console.log("Hang Up call in meet footer");
     console.log('====================================');
-    resetAndNavigate("HomeScreen");
-    emit("hang-up")
+    hangup()
+  
   }
   const getIconColor = isActive => (isActive ? 'white' : 'black');
 

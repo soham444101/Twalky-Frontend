@@ -13,7 +13,6 @@ import { getStream, useStreamStore } from '../services/useStream.store.js';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { goBack, resetAndNavigate } from '../utlities/NavigationUtilities.js';
 import { useWS } from '../services/api/WSProvider.js';
-import { Smile } from 'lucide-react-native';
 
 const LiveMeetScreen = () => {
 
@@ -21,12 +20,9 @@ const LiveMeetScreen = () => {
     participants,
     toggleMic,
     toggleVideo,
-    switchCamera
+    switchCamera,
+    hangup
   } = useWebRTC();
-
-
-
-
   const stream = useStreamStore((s) => s.stream);
   const { containerDimensions, onContainerLayout } = useContainerDimensions();
   console.log('====================================');
@@ -59,7 +55,7 @@ const LiveMeetScreen = () => {
         )
         }
       </View>
-      <MeetFooter togglemic={toggleMic} togglevideo={toggleVideo} />
+      <MeetFooter togglemic={toggleMic} togglevideo={toggleVideo} hangup={hangup} />
     </View>
   )
 }

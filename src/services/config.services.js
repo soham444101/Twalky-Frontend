@@ -1,8 +1,8 @@
 import { Platform } from "react-native";
 
 
-export const BASE_URL = Platform.OS == "android"? 'http://10.215.218.149:5000' :'http://localhost:3000'
-export const SOCKET_URL = Platform.OS == "android"? 'ws://10.0.2.2:5000' :'ws://localhost:3000'
+export const BASE_URL = Platform.OS == "android"? 'http://192.168.1.9:5000' :'http://localhost:3000'
+export const SOCKET_URL = Platform.OS == "android"? 'ws://192.168.1.9:5000' :'ws://localhost:3000'
 
 
 // When we need to Deploy llink then 

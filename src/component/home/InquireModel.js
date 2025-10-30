@@ -10,19 +10,20 @@ import React, { useEffect, useState } from 'react';
 import { useUserStore } from '../../services/useStorage.services';
 import { v4 as uuid } from "uuid";
 import { Colors } from '../../utlities/Constant';
+import Toast from '../../utlities/Toast';
 
 
 
 const InquireModel = ({ onClose, visible }) => {
     const { user, setUser } = useUserStore();
     const [nameCurrent, setName] = useState('');
-    const [profileurl, setProfileurl] = useState('');
+    const [profileurl, setProfileurl] = useState('https://images.pexels.com/photos/23833694/pexels-photo-23833694.jpeg');
 
     useEffect(() => {
         if (visible && user) {
             const { name, photo } = user;
             setName(name || '');
-            setProfileurl(photo || '');
+            setProfileurl(photo ||'https://images.pexels.com/photos/23833694/pexels-photo-23833694.jpeg');
         }
     }, [visible, user]);
 
@@ -40,7 +41,7 @@ const InquireModel = ({ onClose, visible }) => {
 
             onClose();
         } else {
-            Alert.alert("Please fill in all details.");
+            Toast.warning("Please fill your details first");
         }
     };
 

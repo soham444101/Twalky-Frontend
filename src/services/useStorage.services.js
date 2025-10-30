@@ -12,6 +12,7 @@ export const useUserStore = create()(
             setUser: (data) => set({ user: data }),
             addSession: sessionId => {
                 const { sessions } = get();
+                console.log("Add Session is call from zustan")
                 const existingSession = sessions.findIndex(s => s === sessionId);
                 if (existingSession === -1) {
                     set({ sessions: [...sessions, sessionId] })

@@ -49,3 +49,32 @@ export const sessionConstraint = {
     }
 };
 
+export const getStreamURL = (stream) => {
+
+    try {
+        // If it's already a string URL, return it
+        if (typeof stream === 'string') {
+            console.log('Stream URL is string:', stream);
+            return stream;
+        }
+
+        // If it has toURL method, call it
+        if (typeof stream.toURL === 'function') {
+            const url = stream.toURL();
+            console.log('Stream URL from toURL():', url);
+            return url;
+        }
+
+        // If it has _URL property
+        if (stream._URL) {
+            console.log('Stream URL from _URL:', stream._URL);
+            return stream._URL;
+        }
+
+        console.warn('Could not extract stream URL from:', stream);
+        return null;
+    } catch (error) {
+        console.error('Error extracting stream URL:', error);
+        return null;
+    }
+};

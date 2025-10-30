@@ -7,13 +7,15 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  BackHandler,
+  ToastAndroid,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useWS } from '../services/api/WSProvider';
 import { meetStore } from '../services/meetStorage.services';
 import { useUserStore } from '../services/useStorage.services';
-import { addHypen, requestPermission } from '../utlities/Helpers';
-import { mediaDevices, RTCView } from 'react-native-webrtc';
+import { addHypen } from '../utlities/Helpers';
+import { RTCView } from 'react-native-webrtc';
 import { goBack, replace } from '../utlities/NavigationUtilities';
 import {
   ChevronLeft,
@@ -27,58 +29,81 @@ import {
 } from 'lucide-react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Colors } from '../utlities/Constant';
-import { getStream, useStreamStore } from '../services/useStream.store';
+import { useStreamStore } from '../services/useStream.store';
+import Toast from '../utlities/Toast';
 
 const PreapareMeetScreen = () => {
   const { emit, on, off } = useWS();
   const { addParticipant, sessionId, addSessionId, toggle, micOn, videoOn, removeSessionId } = meetStore();
   const { user } = useUserStore();
   const [participants, setParticipants] = useState([]);
-
-
-  // console.log("OurlocalStream in Preapration meet ", stream);
+  const [joinClick, setJoinClick] = useState(false)
   const stream = useStreamStore((s) => s.stream);
 
   useEffect(() => {
     const handleParticipantUpdate = updatedParticipants => {
-      setParticipants(updatedParticipants?.participants || []);
+      console.log("Participant list coming from backend", updatedParticipants);
+      if (updatedParticipants?.participant?.length === 0) {
+        return;
+      }
+      setParticipants(updatedParticipants.participant || []);
     };
+
+
     on('session-info', handleParticipantUpdate);
 
-    toggleLocal("mic");
-    toggleLocal("video")
+    if (stream) {
+      console.log("Stream available, setting initial mic/video state");
+      // toggleLocal("mic");
+      // toggleLocal("video");
+    } else {
+      console.warn("Stream not available yet in PreapareMeetScreen");
+    }
 
-    console.log("OurlocalStream in Preapration meet ", stream);
+    console.log("Local stream in Prepare meet:", stream);
 
     return () => {
       off('session-info', handleParticipantUpdate);
     };
-  }, []);
+  }, [stream]);
 
-  const toggleMicState = newState => {
+
+  const toggleMicState = useCallback(() => {
     const audioTrack = stream?.getAudioTracks?.()[0];
-    if (audioTrack) audioTrack.enabled = newState;
-  };
-
-  const toggleVideoState = newState => {
-    const videoTrack = stream?.getVideoTracks?.()[0];
-    if (videoTrack) videoTrack.enabled = newState;
-  };
-
-  const toggleLocal = type => {
-    if (type === 'mic') {
-      const newMicState = !micOn;
-      toggleMicState(newMicState);
-      toggle('mic');
-    } else if (type === 'video') {
-      const newVideoState = !videoOn;
-      toggleVideoState(newVideoState);
-      toggle('video');
+    if (!audioTrack) {
+      ToastAndroid.show("Mic not ready yet", ToastAndroid.SHORT);
+      return;
     }
-  };
+    audioTrack.enabled = !micOn
+    toggle("mic")
+  }, [])
+
+  const toggleVideoState = useCallback(() => {
+    const videoTrack = stream?.getVideoTracks?.()[0];
+    console.log("video Track in [toggleVideoState]", videoTrack)
+    if (!videoTrack) {
+      ToastAndroid.show("Video not ready yet", ToastAndroid.SHORT);
+      return;
+    }
+    console.log("[visiable.enable] ",videoTrack.enabled)
+    videoTrack.enabled = !videoOn;
+    toggle('video');
+    console.log("[visiable.enable after toggle] ",videoTrack.enabled)
+  }, [])
+
 
   const handleStartCall = async () => {
     try {
+      if (!stream) {
+        Toast.info("Getting camera/microphone stream")
+        return;
+      }
+      if (joinClick) {
+        return;
+      }
+      setJoinClick(true)
+
+
       emit('join-session', {
         name: user?.name,
         photo: user?.photo,
@@ -87,11 +112,14 @@ const PreapareMeetScreen = () => {
         micOn,
         videoOn,
       });
+
       participants?.forEach(i => addParticipant(i));
       addSessionId(sessionId);
       replace('LiveMeetScreen');
     } catch (error) {
       console.log('Error starting call:', error);
+      Toast.error("Fail to get Join meet")
+      setJoinClick(false);
     }
   };
 
@@ -102,14 +130,58 @@ const PreapareMeetScreen = () => {
     return `${names}${count} in the call`;
   };
 
+  let backPressCount = useRef(0);
+  const doingFlag = useRef();
+  useEffect(() => {
+    const backAction = () => {
+      if (doingFlag.current) return;
+      if (backPressCount.current === 0) {
+        console.log('====================================');
+        console.log("Back Action is call");
+        console.log('====================================');
+        backPressCount.current += 1;
+        ToastAndroid.show("Press back again to leave", ToastAndroid.SHORT);
 
+        // Reset counter after 2 seconds
+        doingFlag.current = setTimeout(() => {
+          backPressCount.current = 0;
+        }, 2000);
 
+        return true; // prevent default back action
+      } else {
+        // Second press → Hangup and exit
+        try {
+          clearTimeout(doingFlag.current)
+          deviceStore.getState().removeDevice();
+          clear();
+          console.log("user call leave-preaparescreen Event by mobil back button")
+        } catch (error) {
+          console.error("Error during cleanup on back press:", error);
+        } finally {
+          backPressCount.current = 0;
+          if (doingFlag.current) clearTimeout(doingFlag.current);
+          goBack();
+          return false; // allow default back action (exit screen)
+        }
+
+        // This is avoid the user calling this above state many time 
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
   return (
     <View style={prepareStyles.container}>
       <View style={prepareStyles.header}>
         <ChevronLeft
           size={RFValue(22)}
           onPress={() => {
+            console.log("Back button pressed in prepare screen");
             goBack();
             removeSessionId();
           }}
@@ -123,17 +195,19 @@ const PreapareMeetScreen = () => {
         <View style={prepareStyles.videoContainer}>
           {stream && videoOn ? (
             <RTCView
-              streamURL={stream.toURL()}
+              streamURL={stream?.toURL()}
               objectFit="cover"
               mirror={true}
               style={prepareStyles.rtcView}
             />
           ) : (
-            <Image source={{ uri: user?.photo }} style={prepareStyles.avatar} />
+            <View style={prepareStyles.imageView}>
+              <Image source={{ uri: user?.photo }} style={prepareStyles.avatar} />
+            </View>
           )}
 
           <View style={prepareStyles.toggleContainer}>
-            <TouchableOpacity onPress={() => toggleLocal('mic')} style={prepareStyles.iconButton}>
+            <TouchableOpacity onPress={toggleMicState} style={prepareStyles.iconButton}>
               {micOn ? (
                 <Mic size={RFValue(16)} color="#fff" />
               ) : (
@@ -141,7 +215,7 @@ const PreapareMeetScreen = () => {
               )}
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => toggleLocal('video')} style={prepareStyles.iconButton}>
+            <TouchableOpacity onPress={toggleVideoState} style={prepareStyles.iconButton}>
               {videoOn ? (
                 <Video size={RFValue(16)} color="#fff" />
               ) : (
@@ -200,19 +274,25 @@ const prepareStyles = StyleSheet.create({
   },
   videoContainer: {
     alignItems: 'center',
+    justifyContent: "center",
     marginTop: 12,
   },
   rtcView: {
     width: 220,
     height: 320,
-    // borderRadius: 12,
     backgroundColor: '#000',
   },
-  avatar: {
+  imageView: {
     width: 220,
     height: 320,
-    // borderRadius: 12,
     backgroundColor: Colors.surface,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  avatar: {
+    width: RFValue(50),
+    height: RFValue(50),
+    borderRadius: RFValue(40)
   },
   toggleContainer: {
     flexDirection: 'row',

@@ -8,6 +8,7 @@ import {
 export const navigationRef = createNavigationContainerRef();
 
 export function navigate(routeName, params) {
+    console.log("Navigation utlitie is call")
     if (navigationRef.isReady()) {
         navigationRef.dispatch(CommonActions.navigate(routeName, params));
 
@@ -30,6 +31,9 @@ export function resetAndNavigate(routeName) {
 }
 
 export function goBack() {
+    console.log("...............................")
+    console.log("Goback function called")
+    console.log("...............................")
     if (navigationRef.isReady()) {
         navigationRef.dispatch(CommonActions.goBack());
     }

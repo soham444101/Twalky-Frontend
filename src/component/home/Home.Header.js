@@ -17,13 +17,7 @@ const Homeheader = () => {
         if (!user?.name) setVisible(true);
     }, [user?.name]);
 
-    const handleNavigation = () => {
-        if (!user?.name) {
-            setVisible(true);
-            return;
-        }
-        navigate("JoinMeetScreen");
-    };
+
 
     return <View style={styles.topview}>
         <SafeAreaView />
@@ -43,8 +37,7 @@ const Homeheader = () => {
         </View>
 
 
-
-        <InquireModel onClose={() => setVisible(false)} visible={visible}/>
+        <InquireModel onClose={() => setVisible(false)} visible={visible} />
     </View>
         ;
 };
@@ -74,7 +67,7 @@ const styles = StyleSheet.create({
     // }
 
     inputone: {
-        
+
         width: RFValue(220),
         height: RFValue(40),
         borderRadius: RFValue(25),
@@ -84,13 +77,13 @@ const styles = StyleSheet.create({
 
     },
     topview: {
-        height:RFValue(50),
-        width:"90%",
-        justifyContent:"center",
-        paddingHorizontal:RFValue(10),
-        backgroundColor:Colors.shadow,
-        borderRadius:RFValue(25),
-        alignSelf:"center"
+        height: RFValue(50),
+        width: "90%",
+        justifyContent: "center",
+        paddingHorizontal: RFValue(10),
+        backgroundColor: Colors.shadow,
+        borderRadius: RFValue(25),
+        alignSelf: "center"
     }
 });
 

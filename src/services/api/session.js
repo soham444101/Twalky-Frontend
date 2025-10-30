@@ -10,7 +10,7 @@ export const createSession = async () => {
         console.log("Crete Session Is Call from Frontend")
         const apicall = await axios.get(`${BASE_URL}/create-session`);
         console.log('====================================');
-        console.log("Create Session Output in api/session.js",apicall);
+        console.log("Create Session Output in api/session.js", apicall);
         console.log('====================================');
         return apicall?.data?.sessionId;
 
@@ -25,9 +25,10 @@ export const createSession = async () => {
 export const checkSession = async (id) => {
     try {
 
+        console.log("CheckSession Api Call here")
         const apicall = await axios.get(`${BASE_URL}/is-alive?sessionId=${id}`);
         console.log('====================================');
-        console.log("Create Session Output in api/session.js",apicall);
+        console.log("Create Session Output in api/session.js", apicall);
         console.log('====================================');
         return apicall?.data?.isAlive;
 

@@ -10,15 +10,17 @@ import {
 import * as Clipboard from '@react-native-clipboard/clipboard';
 import { Clipboard as ClipboardIcon, Share as ShareIcon } from 'lucide-react-native';
 import { Colors } from '../../utlities/Constant';
+import { addHypen } from '../../utlities/Helpers';
 
 const NoUserList = ({ sessionId }) => {
-  const inviteLink = `https://meet.google.com/${addHyphens(sessionId)}`;
+  const inviteLink = `https://twalky.com/${addHypen(sessionId)}`;
   console.log('====================================');
   console.log(Clipboard);
   console.log('====================================');
 
   const copyToClipboard = () => {
-    Clipboard.default.setString(inviteLink);
+    Clipboard.default.setString(addHypen(sessionId));
+
     ToastAndroid.show('Link copied to clipboard!', ToastAndroid.SHORT);
   };
 

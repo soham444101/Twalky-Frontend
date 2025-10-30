@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Alert, FlatList, Image, StyleSheet, ToastAndroid } from 'react-native';
 import React, { useEffect } from 'react';
 import Homeheader from '../component/home/Home.Header.js';
-import { Calendar, CirclePlus, ClipboardIcon, Code, LucideVideo, Plus, Video, VideoIcon, VideoOff, VideoOffIcon } from 'lucide-react-native';
+import { Calendar, CirclePlus, ClipboardIcon, Video } from 'lucide-react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useUserStore } from '../services/useStorage.services.js';
 import { navigate } from '../utlities/NavigationUtilities';
@@ -10,9 +10,9 @@ import { checkSession } from '../services/api/session.js';
 import { meetStore } from '../services/meetStorage.services.js';
 import { useWS } from '../services/api/WSProvider.js';
 import { Colors } from '../utlities/Constant';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useStreamStore } from '../services/useStream.store.js';
 import * as Clipboard from '@react-native-clipboard/clipboard';
+import Toast from '../utlities/Toast.js';
 
 const HomeScreen = () => {
   const { emit } = useWS();
@@ -21,82 +21,89 @@ const HomeScreen = () => {
   const stream = useStreamStore((s) => s.stream);
   const initStream = useStreamStore((s) => s.initStream);
 
-
-
   const handleJoinNavigation = () => {
     if (!user?.name) {
-      Alert.alert("Fill the form first");
+      Toast.warning("Please fill your details first");
       return;
     }
     console.log('====================================');
-    console.log("user", user);
+    console.log("User:", user);
     console.log('====================================');
     navigate("JoinMeetScreen");
   };
 
   const handleSessionJoin = async (sessionId) => {
-    console.log("Session Id in join session (Check SessioID) ", sessionId)
+    console.log("Session ID to join:", sessionId);
+
     if (!user?.name) {
-      Alert.alert("Fill the form first");
+      Toast.warning("Please fill your details first");
       return;
     }
+
+    // Check permissions
     if (!hasAudioPermission) {
       const isAudioOk = await requestAudio();
-      if (!isAudioOk) { Alert.alert("Audio Permission Require"); return; }
+      if (!isAudioOk) {
+        Toast.error("Audio permission required");
+        return;
+      }
     }
     if (!hasVideoPermission) {
       const isVideoOk = await requestVideo();
-      if (!isVideoOk) { Alert.alert("Video Permission Require"); return; }
+      if (!isVideoOk) {
+        Toast.error("Video permission required");
+        return;
+      }
     }
-    // That time we have the permission of both so we not need to ask permission
 
+    // Validate session exists
     const isValid = await checkSession(sessionId);
 
+    const newSessionId = removeHypen(sessionId);
     if (isValid) {
-
       console.log('====================================');
-      console.log("getstream befor", stream);
+      console.log("Session is valid, current stream:", stream);
       console.log('====================================');
 
-
+      // Initialize stream if not available
       if (!stream) {
+        // Toast.info("Initializing camera...");
         const returnStream = await initStream();
         if (!returnStream) {
-          Alert.alert("Retry join we fails to get your Video Audio connection");
+          Toast.error("Failed to access camera/microphone");
           return;
         }
 
         console.log('====================================');
-        console.log("Stream return values", returnStream);
-        console.log("Stream return values", returnStream.toURL());
+        console.log("Stream initialized successfully");
+        console.log("Stream URL:", returnStream.toURL());
         console.log('====================================');
       }
 
-
-
       emit("prepare-session", {
         userId: user?.id,
-        sessionId: removeHypen(sessionId),
+        sessionId: newSessionId,
       });
-      addSession(sessionId);/// this we can remove
-      await addSessionId(sessionId);
+      console.log("After Prepare-session event call")
+      addSession(newSessionId);
+      addSessionId(newSessionId);
       navigate("PreapareMeetScreen");
+      console.log("Navigating")
+      Toast.success("Joining meeting!");
+
     } else {
-      removeSession(sessionId);
-      removeSessionId(sessionId);// this we can remove
-      Alert.alert("No meeting exists with this ID.");
+      removeSession(newSessionId);
+      removeSessionId();
+      Toast.error("Meeting not found or has ended");
     }
   };
 
-
   const copyToClipboard = (item) => {
-    Clipboard.default.setString(`Client://join/${item}`);
+    Clipboard.default.setString(`${addHypen(item)}`);
     ToastAndroid.show('Link copied to clipboard!', ToastAndroid.SHORT);
   };
 
-
   const renderSessionItem = ({ item }) => (
-
     <View style={styles.sessionItem}>
       <Calendar size={RFValue(20)} color={Colors.primary} />
       <View style={styles.sessionInfo}>
@@ -106,7 +113,7 @@ const HomeScreen = () => {
         style={styles.clipboard}
         onPress={() => copyToClipboard(item)}
       >
-        <ClipboardIcon size={20} color="black" />
+      <ClipboardIcon size={20} color={Colors.text} />
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.joinButton}
@@ -118,8 +125,7 @@ const HomeScreen = () => {
   );
 
   return (
-    <View style={styles.container} >
-      <SafeAreaView />
+    <View style={styles.container}>
       <Homeheader />
 
       <FlatList
@@ -129,8 +135,10 @@ const HomeScreen = () => {
         contentContainerStyle={sessions.length === 0 && styles.emptyList}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Image source={require("../assest/erasebg-transformed.png")} style={styles.image} />
-
+            <Image
+              source={require("../assest/erasebg-transformed.png")}
+              style={styles.image}
+            />
             <Text style={styles.heading}>Video call and meeting for everyone</Text>
             <Text style={styles.subHeading}>Connect, collaborate, and celebrate</Text>
           </View>
@@ -139,10 +147,10 @@ const HomeScreen = () => {
         maxToRenderPerBatch={10}
       />
 
-      <View style={styles.fabCantainer}>
-        <TouchableOpacity style={styles.fabButton1} onPress={handleJoinNavigation} >
+      <View style={styles.fabContainer}>
+        <TouchableOpacity style={styles.fabButton1} onPress={handleJoinNavigation}>
           <Video size={RFValue(20)} color="#fff" />
-          <Text style={styles.fabText}>Code</Text>
+          <Text style={styles.fabText}>Join</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.fabButton} onPress={handleJoinNavigation}>
           <CirclePlus size={RFValue(20)} color="#fff" />
@@ -152,14 +160,10 @@ const HomeScreen = () => {
     </View>
   );
 };
-
-export default HomeScreen;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-    // paddingTop:RFValue(10)
   },
   sessionItem: {
     flexDirection: 'row',
@@ -200,7 +204,6 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 200,
     marginBottom: 20,
-    backgroundColor: "green"
   },
   heading: {
     fontSize: RFValue(16),
@@ -231,8 +234,7 @@ const styles = StyleSheet.create({
   },
   clipboard: {
     marginHorizontal: RFValue(10)
-  }
-  ,
+  },
   fabButton1: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -244,14 +246,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     elevation: 3
   },
-  fabCantainer: {
+  fabContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap:RFValue(25),
-    // backgroundColor:"red",
-    paddingBottom:RFValue(80),
-    zIndex:2
+    gap: RFValue(25),
+    paddingBottom: RFValue(80),
+    zIndex: 2
   }
-
 });
+export default HomeScreen;

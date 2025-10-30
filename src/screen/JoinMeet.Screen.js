@@ -5,6 +5,7 @@ import {
   TextInput,
   Alert,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import React, { useState } from 'react';
 import { ChevronLeft, Video } from 'lucide-react-native';
@@ -17,9 +18,8 @@ import { useWS } from '../services/api/WSProvider';
 import { checkSession, createSession } from '../services/api/session';
 import { removeHypen, requestAudio, requestVideo } from '../utlities/Helpers.js';
 import LinearGradient from 'react-native-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { getMediaTrackfun, getStream, useStreamStore } from "../services/useStream.store.js"
-
+import { useStreamStore } from "../services/useStream.store.js";
+import Toast from "../utlities/Toast.js"
 const JoinMeetScreen = () => {
   const { addSession, user, removeSession, hasVideoPermission, hasAudioPermission } = useUserStore();
   const { addSessionId, removeSessionId } = meetStore();
@@ -27,45 +27,59 @@ const JoinMeetScreen = () => {
   const { emit } = useWS();
   const stream = useStreamStore((s) => s.stream);
   const initStream = useStreamStore((s) => s.initStream);
-
-
+  const [isCreating, setIsCreating] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
   const createNewMeet = async () => {
     if (!user?.id) {
       navigate('HomeScreen');
-      Alert.alert("Fill the details first")
+      Toast.warning("Please fill your details first");
       return;
     }
+
+    Toast.info("Creating meeting...");
 
     console.log('====================================');
     console.log("createNewMeet Calling");
     console.log(hasAudioPermission, hasVideoPermission);
     console.log('====================================');
+
+    // Check permissions
     if (!hasAudioPermission) {
       const isAudioOk = await requestAudio();
-      if (!isAudioOk) { Alert.alert("Audio Permission Require"); return; }
+      if (!isAudioOk) {
+        Toast.error("Audio permission required");
+        return;
+      }
     }
     if (!hasVideoPermission) {
       const isVideoOk = await requestVideo();
-      if (!isVideoOk) { Alert.alert("Video Permission Require"); return; }
+      if (!isVideoOk) {
+        Toast.error("Video permission required");
+        return;
+      }
     }
 
+    setIsCreating(true);
+    const sessionId = await createSession();
+    console.log('====================================');
+    console.log("Session created:", sessionId);
+    console.log("Current stream:", stream);
+    console.log('====================================');
 
-    const sessionId = await createSession(); // Make sure this function is correctly imported/defined
-    console.log('====================================');
-    console.log("getstream befor", stream);
-    console.log('====================================');
     if (sessionId) {
       if (!stream) {
         const streams = await initStream();
         if (!streams) {
-          Alert.alert("Retry We fail to get video media");
+          Alert.alert("Retry - Failed to get video/audio media");
+          setIsCreating(false)
           return;
         }
 
         console.log('====================================');
-        console.log("Stream return values", streams);
+        console.log("Stream initialized:", streams);
         console.log('====================================');
       }
+
       addSession(sessionId);
       addSessionId(sessionId);
       emit('prepare-session', {
@@ -73,62 +87,92 @@ const JoinMeetScreen = () => {
         sessionId,
       });
       navigate('PreapareMeetScreen');
-      return;
     } else {
       console.error('Error in JoinMeetScreen createNewMeet', sessionId);
+      Toast.error("Fail to create the meet");
     }
+    setIsCreating(false)
   };
 
   const joinViaSessionId = async () => {
+    // Check permissions
     if (!hasAudioPermission) {
       const isAudioOk = await requestAudio();
-      if (!isAudioOk) { Alert.alert("Audio Permission Require"); return; }
+      if (!isAudioOk) {
+        Toast.error("Audio permission required");
+        return;
+      }
     }
     if (!hasVideoPermission) {
       const isVideoOk = await requestVideo();
-      if (!isVideoOk) { Alert.alert("Video Permission Require"); return; }
-    }
-    if (!code || code?.length < 6) {
-      Alert.alert('Enter valid meeting code');
-    }
-    const isAvailable = await checkSession(removeHypen(code));
-    if (isAvailable) {
-
-      if (!stream) {
-
-
-        const streams = await getMediaTrackfun();
-        if (!streams) {
-          Alert.alert("Retry join we fails to get your Video Audio connection");
-          return;
-        }
-        if (!streams.getVideoTracks()) {
-          Alert.alert("Audio track we got fail to got video one");
-          return;
-        }
-        console.log('====================================');
-        console.log("Stream return values", streams);
-        console.log('====================================');
-
+      if (!isVideoOk) {
+        Toast.error("Video permission required");
+        return;
       }
-      addSession(code);
-      await addSessionId(code);
+    }
+
+    // Validate code
+    if (!code || code?.length < 9) {
+      Toast.warning("Enter valide Code");
+      return;
+    }
+
+
+    console.log("Code to join:", code);
+    console.log("Code without hyphen:", removeHypen(code));
+
+    setIsJoining(true);
+    const newCode = removeHypen(code);
+    const isAvailable = await checkSession(newCode);
+    console.log("Session available:", isAvailable);
+
+    if (isAvailable) {
+      if (!stream) {
+        const streams = await initStream();
+        if (!streams) {
+          Toast.error("Failed to access camera/microphone");
+          return;
+        }
+
+        const videoTracks = streams.getVideoTracks();
+        const audioTracks = streams.getAudioTracks();
+
+        if (!videoTracks || videoTracks.length === 0) {
+          Toast.error("Failed to access camera");
+          return;
+        }
+
+        if (!audioTracks || audioTracks.length === 0) {
+          Toast.error("Failed to access microphone");
+          return;
+        }
+
+        console.log('====================================');
+        console.log("Stream initialized:", streams);
+        console.log("Video tracks:", videoTracks.length);
+        console.log("Audio tracks:", audioTracks.length);
+        console.log('====================================');
+      }
+
+      addSession(newCode);
+      await addSessionId(newCode);
       emit('prepare-session', {
         userId: user?.id,
-        sessionId: removeHypen(code),
+        sessionId: newCode,
       });
       navigate('PreapareMeetScreen');
     } else {
-      removeSession(code);
-      removeSessionId(code);// this we can remove
+      removeSession(newCode);
+      removeSessionId(newCode);
       setCode('');
-      Alert.alert('There is no active meeting with this code.');
+      Toast.error("Meeting not found or has ended");
     }
+    setIsJoining(false)
+
   };
 
   return (
     <View style={styles.container}>
-      <SafeAreaView />
       <View style={styles.header}>
         <ChevronLeft size={RFValue(18)} onPress={goBack} color={Colors.text} />
         <Text style={styles.title}>Join Meet</Text>
@@ -143,7 +187,9 @@ const JoinMeetScreen = () => {
         <TouchableOpacity activeOpacity={0.8} onPress={createNewMeet}>
           <View style={styles.createContent}>
             <Video size={RFValue(22)} color="#fff" />
-            <Text style={styles.createText}>Create New Meet</Text>
+            {isCreating ? (<ActivityIndicator color="#fff" />) : (<Text style={styles.createText}>Create New Meet</Text>
+            )}
+
           </View>
         </TouchableOpacity>
       </LinearGradient>
@@ -162,10 +208,11 @@ const JoinMeetScreen = () => {
           onChangeText={setCode}
           returnKeyType="go"
           onSubmitEditing={joinViaSessionId}
-
         />
         <TouchableOpacity style={styles.joinBtn} onPress={joinViaSessionId}>
-          <Text style={styles.joinBtnText}>Join Now</Text>
+          {isJoining ? (<ActivityIndicator color="#fff" size={RFValue(10)} />) : (<Text style={styles.joinBtnText}>Join</Text>
+          )}
+
         </TouchableOpacity>
       </View>
     </View>

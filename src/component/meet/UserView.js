@@ -1,28 +1,19 @@
-import { View, Text, PanResponder, Animated, Image, StyleSheet, Dimensions } from 'react-native';
-import React, { useRef, useMemo, useCallback } from 'react';
+import { View, Text, PanResponder, Animated, Image, StyleSheet } from 'react-native';
+import React, { useRef, useMemo, useCallback, useState } from 'react';
 import { RTCView } from 'react-native-webrtc';
 import { meetStore } from '../../services/meetStorage.services';
 import { useUserStore } from '../../services/useStorage.services';
-
-
+import { RFValue } from 'react-native-responsive-fontsize';
+import { getInitials, isValidImageUrlCached } from "../../utlities/imageUrlValidater.js"
 const UserView = ({ containerDimensions, localStream }) => {
   const { width: containerWidth, height: containerHeight } = containerDimensions;
-  console.log('====================================');
-
-  console.log("Height Of screen",containerHeight);
-  console.log('====================================');
   const { videoOn } = meetStore();
   const { user } = useUserStore();
-  
-  console.log('====================================');
-  console.log("UserView Localstream", localStream);
-  console.log("UserView toURL()", localStream.toURL());
-  console.log("User", user);
-  console.log("PanResponce ", panResponder);
-  // console.log("...panResponder.panHandlers", ...panResponder.panHandlers);
-  console.log('====================================');
 
-  // Video view dimensions - using fixed percentages for consistency
+  // Track if image failed to load
+  const [imageError, setImageError] = useState(false);
+
+  // Video view dimensions
   const videoWidth = useMemo(() => containerWidth * 0.30, [containerWidth]);
   const videoHeight = useMemo(() => containerHeight * 0.20, [containerHeight]);
 
@@ -47,11 +38,8 @@ const UserView = ({ containerDimensions, localStream }) => {
       corner,
       distance: Math.hypot(x - pos.x, y - pos.y)
     }));
-    console.log('====================================');
-    console.log("Distances We printing : ",distances);
-    console.log('====================================');
-    
-    return distances.reduce((closest, current) => 
+
+    return distances.reduce((closest, current) =>
       current.distance < closest.distance ? current : closest
     ).corner;
   }, [cornerPositions]);
@@ -59,11 +47,9 @@ const UserView = ({ containerDimensions, localStream }) => {
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (evt, gestureState) => {
-        // Only start pan if there's significant movement
         return Math.abs(gestureState.dx) > 2 || Math.abs(gestureState.dy) > 2;
       },
       onPanResponderGrant: () => {
-        // Stop any ongoing animations
         pan.stopAnimation();
         pan.setOffset({
           x: pan.x._value,
@@ -73,29 +59,17 @@ const UserView = ({ containerDimensions, localStream }) => {
       },
       onPanResponderMove: Animated.event(
         [null, { dx: pan.x, dy: pan.y }],
-        { 
-          useNativeDriver: false,
-          listener: (evt, gestureState) => {
-            // Optional: Add haptic feedback or visual feedback during drag
-          }
-        }
+        { useNativeDriver: false }
       ),
       onPanResponderRelease: (_, gestureState) => {
         pan.flattenOffset();
-        
-        // Get current position
         const currentX = pan.x._value;
         const currentY = pan.y._value;
-        
-        // Apply boundaries to prevent going outside container
         const boundedX = Math.min(Math.max(currentX, 0), containerWidth - videoWidth);
-        const boundedY = Math.min(Math.max(currentY, 0), containerHeight -videoHeight);
-        
-        // Find closest corner
+        const boundedY = Math.min(Math.max(currentY, 0), containerHeight - videoHeight);
         const closestCorner = findClosestCorner(boundedX, boundedY);
         const targetPosition = cornerPositions[closestCorner];
-        
-        // Animate to closest corner with spring animation
+
         Animated.spring(pan, {
           toValue: targetPosition,
           useNativeDriver: false,
@@ -108,12 +82,10 @@ const UserView = ({ containerDimensions, localStream }) => {
     })
   ).current;
 
-  // Memoized transform style for better performance
   const transformStyle = useMemo(() => ({
     transform: pan.getTranslateTransform(),
   }), [pan]);
 
-  // Memoized video dimensions style
   const containerStyle = useMemo(() => ({
     position: 'absolute',
     width: videoWidth,
@@ -123,43 +95,69 @@ const UserView = ({ containerDimensions, localStream }) => {
     overflow: 'hidden',
     elevation: 5,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    zIndex:2
+    zIndex: 2
   }), [videoWidth, videoHeight]);
+
+  //  Validate photo URL
+  const hasValidPhoto = useMemo(() => {
+    return user?.photo && !imageError && isValidImageUrlCached(user.photo);
+  }, [user?.photo, imageError]);
+
+  // Handle image load error
+  const handleImageError = useCallback(() => {
+    console.log('Image failed to load for user:', user?.name);
+    setImageError(true);
+  }, [user?.name]);
+
+  //  Reset error when photo URL changes
+  React.useEffect(() => {
+    setImageError(false);
+  }, [user?.photo]);
+
+  //  Render content based on video/photo state
+  const renderContent = () => {
+    if (localStream && videoOn) {
+      return (
+        <RTCView
+          streamURL={localStream?.toURL()}
+          style={styles.localVideo}
+          mirror
+          zOrder={2}
+          objectFit="cover"
+        />
+      );
+    }
+
+    if (hasValidPhoto) {
+      return (
+        <View style={styles.imageView}>
+          <Image
+            source={{ uri: user.photo }}
+            style={styles.image}
+            onError={handleImageError}
+          />
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.noVideo}>
+        <Text style={styles.initial}>
+          {getInitials(user?.name)}
+        </Text>
+      </View>
+    );
+  };
 
   return (
     <Animated.View
       {...panResponder.panHandlers}
       style={[containerStyle, transformStyle]}
     >
-      {user && (
-        localStream && videoOn ? (
-          <RTCView
-            streamURL={localStream?.toURL()}
-            style={styles.localVideo}
-            mirror
-            zOrder={2}
-            objectFit="cover"
-          />
-        ) : (
-          <>
-            {user?.photo ? (
-              <Image source={{ uri: user.photo }} style={styles.image} />
-            ) : (
-              <View style={styles.noVideo}>
-                <Text style={styles.initial}>
-                  {user?.name?.charAt(0).toUpperCase() || '?'}
-                </Text>
-              </View>
-            )}
-          </>
-        )
-      )}
+      {user && renderContent()}
       <Text style={styles.label}>You</Text>
     </Animated.View>
   );
@@ -171,10 +169,17 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#000',
   },
-  image: {
+  imageView: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#444',
+  },
+  image: {
+    width: RFValue(40),
+    height: RFValue(40),
+    borderRadius: RFValue(20),
   },
   noVideo: {
     flex: 1,
