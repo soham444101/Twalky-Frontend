@@ -126,32 +126,48 @@ npm run ios
 twalky-meet-client/
 │
 ├── src/
+│   ├── assest                        # Images to show 
+│   │
 │   ├── services/
 │   │   ├── api/WSProvider.js         # Socket.IO connection manager
-│   │   ├── useStream.store.js        # Zustand store for media streams
+│   │   ├── api/Session.js            # Api Call here 
+│   │   └── config.services.js        # Url based on platform and usecases
 │   │   ├── meetStorage.services.js   # Meeting participants state
+│   │   ├── storage.services.js       # MMKV Storage
+│   │   ├── useStream.store.js        # Zustand store for media streams
 │   │   └── useStorage.services.js    # User authentication & storage
 │   │
 │   ├── hooks/
 │   │   └── useWebRTC.js              # Core WebRTC connection logic
+│   │   └── useContainerDiemension.js # Getting the Diamension based on layout
 │   │
 │   ├── components/
-│   │   ├── ParticipantView.js        # Render each user's stream
-│   │   ├── ToggleButton.js           # Mic/Camera switch button
-│   │   └── Loader.js
+│   │   ├── home/Home.Header.js        # Header componenet here
+│   │   ├── home/InquireModel.js       # For getting and setting user date
+│   │   ├── meet/MeetFooter.js         # LiveScreen footer Component
+│   │   ├── meet/MeetHeader.js         # LiveScreen header Component
+│   │   ├── meet/NoUserList.js         # LiveScreen when no user Present
+│   │   ├── meet/People.js             # LiveScreen paticpant show by this component
+│   │   ├── meet/UserView.js           # LiveScreen local user video component things here
 │   │
 │   ├── utilities/
 │   │   ├── Helpers.js                # Peer config, constraints
-│   │   └── NavigationUtils.js
+│   │   └── NavigationUtils.js        # Navigation utilities for navigatuin
+│   │   └── Toast.js                  # For show the error/warn/info in short message
+│   │   └── Constant.js               # Constat value here
+│   │
+│   ├── navigation/
+│   │   ├── Navigation.js            # Navigating file
 │   │
 │   ├── screens/
 │   │   ├── HomeScreen.js             # Session creation/join
 │   │   ├── PrepareMeetScreen.js      # Lobby (mic/camera preview)
 │   │   └── LiveMeetScreen.js         # Main meeting UI
+│   │   └── JoinMeet.Screen.js        # Here create/join meet using code 
+│   │   └── Splash.Screen.js          # Starting page
 │   │
 │   └── App.js
 │
-├── .env
 ├── package.json
 ├── babel.config.js
 └── README.md
