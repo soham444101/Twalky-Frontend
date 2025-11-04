@@ -69,11 +69,9 @@ React Native mobile application for real-time video calling with secure authenti
 ### Authentication & Profile
 <table>
   <tr>
-    <td><img src="docs/screenshots/login.png" width="200"/></td>
     <td><img src="docs/screenshots/profile.png" width="200"/></td>
   </tr>
   <tr>
-    <td align="center">Google Sign-In</td>
     <td align="center">Profile Screen</td>
   </tr>
 </table>
@@ -84,7 +82,7 @@ React Native mobile application for real-time video calling with secure authenti
     <td><img src="docs/screenshots/dev-panel-hidden.png" width="200"/></td>
   </tr>
   <tr>
-    <td align="center">Tokens</td>
+    <td align="center">Developement Screen</td>
   </tr>
 </table>
 
@@ -102,8 +100,7 @@ React Native mobile application for real-time video calling with secure authenti
 
 ## 🎬 Demo Video
 
-[> **Coming Soon:** Demo video showing authentication flow, developer panel, and push notifications](https://drive.google.com/file/d/1gxzk3bu--s_-62vQrQr05Cftm6LcJyiW/view?usp=sharing)
-
+https://drive.google.com/file/d/1gxzk3bu--s_-62vQrQr05Cftm6LcJyiW/view?usp=sharing
 ---
 
 ## 🛠️ Tech Stack
