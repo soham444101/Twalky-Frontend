@@ -111,7 +111,7 @@ https://drive.google.com/file/d/1gxzk3bu--s_-62vQrQr05Cftm6LcJyiW/view?usp=shari
   "language": "JavaScript",
   "navigation": "React Navigation",
   "state": "Zustand",
-  "storage": "AsyncStorage",
+  "storage": "MMKV",
   "authentication": "Firebase Auth",
   "notifications": "FCM + Notifee",
   "realtime": "Socket.io Client",
