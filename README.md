@@ -45,12 +45,9 @@ React Native mobile application for real-time video calling with secure authenti
 - Foreground notifications with custom UI (Notifee)
 - Background notification handling
 - Notification tap navigation
-- Android notification channels
 
 ### 👤 Profile Management
 - Google account info display
-- Notification preferences toggle
-- Dark mode toggle (UI ready)
 - Logout functionality
 
 ### 🔧 Developer Tools
@@ -74,12 +71,10 @@ React Native mobile application for real-time video calling with secure authenti
   <tr>
     <td><img src="docs/screenshots/login.png" width="200"/></td>
     <td><img src="docs/screenshots/profile.png" width="200"/></td>
-    <td><img src="docs/screenshots/settings.png" width="200"/></td>
   </tr>
   <tr>
     <td align="center">Google Sign-In</td>
     <td align="center">Profile Screen</td>
-    <td align="center">Settings</td>
   </tr>
 </table>
 
@@ -87,11 +82,9 @@ React Native mobile application for real-time video calling with secure authenti
 <table>
   <tr>
     <td><img src="docs/screenshots/dev-panel-hidden.png" width="200"/></td>
-    <td><img src="docs/screenshots/dev-panel-visible.png" width="200"/></td>
   </tr>
   <tr>
-    <td align="center">Tokens Hidden</td>
-    <td align="center">Tokens Visible</td>
+    <td align="center">Tokens</td>
   </tr>
 </table>
 
@@ -99,11 +92,9 @@ React Native mobile application for real-time video calling with secure authenti
 <table>
   <tr>
     <td><img src="docs/screenshots/notification-foreground.png" width="200"/></td>
-    <td><img src="docs/screenshots/notification-background.png" width="200"/></td>
   </tr>
   <tr>
     <td align="center">Foreground Notification</td>
-    <td align="center">Background Notification</td>
   </tr>
 </table>
 
@@ -111,7 +102,7 @@ React Native mobile application for real-time video calling with secure authenti
 
 ## 🎬 Demo Video
 
-> **Coming Soon:** Demo video showing authentication flow, developer panel, and push notifications
+[> **Coming Soon:** Demo video showing authentication flow, developer panel, and push notifications](https://drive.google.com/file/d/1gxzk3bu--s_-62vQrQr05Cftm6LcJyiW/view?usp=sharing)
 
 ---
 
@@ -204,37 +195,6 @@ npm run android
 npm run ios
 ```
 
----
-
-## 📁 Project Structure
-
-```
-src/
-├── screens/
-│   ├── LoginScreen.js
-│   ├── ProfileScreen.js          # User profile & settings
-│   ├── DeveloperScreen.js        # Debug panel
-│   └── (VideoCall screens - in progress)
-├── components/
-│   ├── common/
-│   └── auth/
-├── services/
-│   ├── authService.js            # Google Sign-In & JWT
-│   ├── tokenService.js           # Token management
-│   ├── notificationService.js    # FCM handler
-│   ├── socketService.js          # Socket.io client
-│   └── api.js                    # HTTP client with interceptors
-├── navigation/
-│   └── Navigation.js
-├── store/
-│   └── (Zustand stores)
-└── utils/
-    ├── constants.js
-    └── helpers.js
-```
-
----
-
 ## 🔐 Authentication Flow
 
 ```
@@ -248,7 +208,7 @@ Send to Backend API
     ↓
 Backend verifies & returns JWT tokens
     ↓
-Store in AsyncStorage
+Store in MMKV
     ↓
 Connect Socket.io with token
     ↓
@@ -309,7 +269,6 @@ Access by tapping app version 5 times on Profile screen.
 - Monitor Socket.io connection
 - Check FCM registration status
 - Copy tokens for API testing
-- Toggle token visibility
 
 ---
 
@@ -320,7 +279,6 @@ Currently implementing Mediasoup client for scalable group video calls.
 **What's Working:**
 - Socket.io signaling
 - Room creation/joining
-- Participant tracking
 
 **What's In Progress:**
 - Producer/Consumer setup
@@ -335,8 +293,7 @@ Currently implementing Mediasoup client for scalable group video calls.
 ## 🐛 Known Issues
 
 - [ ] Dark mode UI not fully implemented (toggle works, styles pending)
-- [ ] Token refresh sometimes requires app restart (edge case)
-- [ ] iOS notification permissions need better UX flow
+- [ ] Not optimized system design (somecase need optimizations)
 
 ---
 
@@ -408,5 +365,6 @@ For questions about this project or collaboration:
 - [Mediasoup Documentation](https://mediasoup.org)
 
 ---
+⭐ **If you found this project useful, give it a star on GitHub!** [🔼 Back to top](#top)
 
-*Last Updated: November 2024*
+*Last Updated: November 2025*
