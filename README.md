@@ -38,7 +38,7 @@ React Native mobile application for real-time video calling with secure authenti
 - Google Sign-In integration via Firebase Auth
 - Dual JWT token system (access + refresh)
 - Automatic token refresh without user logout
-- Secure token storage with AsyncStorage
+- Secure token storage with MMKV
 
 ### 🔔 Push Notifications
 - Firebase Cloud Messaging (FCM) integration
