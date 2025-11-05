@@ -463,7 +463,7 @@ Full Stack & React Native Developer
 
 - 📧 Email: sohamaswar@gmail.com
 - 🔗 GitHub: [@soham444101](https://github.com/soham444101)
-- 💼 LinkedIn: [Soham Aswar](https://linkedin.com/in/sohamaswar)
+- 💼 LinkedIn: [Soham Aswar](https://www.linkedin.com/in/soham-aswar-18376b22a)
 - 📍 Location: Pune, Maharashtra, India
 
 ---
@@ -493,7 +493,7 @@ Full Stack & React Native Developer
 
 For questions, collaboration, or opportunities:
 - 📧 sohamaswar@gmail.com
-- 💼 [LinkedIn Profile](https://linkedin.com/in/sohamaswar)
+- 💼 [LinkedIn Profile](https://www.linkedin.com/in/soham-aswar-18376b22a)
 
 ---
 
