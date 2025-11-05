@@ -96,7 +96,7 @@
 > **Current Implementation:** Authentication, Notifications, and Complete UI
 
 **Video:** 
-<img src="https://github.com/user-attachments/assets/f1100cb2-5022-4219-96a1-687a2c2145b8" width="400" height="1000" />
+<img src="https://github.com/user-attachments/assets/f1100cb2-5022-4219-96a1-687a2c2145b8" width="400" height="1000"/>
 
 ---
 
