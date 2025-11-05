@@ -499,7 +499,7 @@ For questions, collaboration, or opportunities:
 
 ## ⭐ Show Your Support
 
-If this project interests you, please consider giving it a star!
+⭐ **If you found this project useful, give it a star on GitHub!** [🔼 Back to top](#top)
 
 ---
 
