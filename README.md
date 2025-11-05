@@ -95,79 +95,8 @@
 
 > **Current Implementation:** Authentication, Notifications, and Complete UI
 
-**Video:** ![signal-2025-11-05-115923](https://github.com/user-attachments/assets/f1100cb2-5022-4219-96a1-687a2c2145b8)
-
----
-
-
----
-
-## 🏗️ System Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                  React Native Frontend                       │
-│                                                              │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │                   UI Layer                             │ │
-│  │  • LoginScreen      • HomeScreen     • ProfileScreen  │ │
-│  │  • JoinScreen       • PrepareScreen  • DevPanel       │ │
-│  └────────────────────────────────────────────────────────┘ │
-│                           ↓                                  │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │                Services Layer                          │ │
-│  │  • authService.js        (Google OAuth, JWT)          │ │
-│  │  • tokenService.js       (Access/Refresh tokens)      │ │
-│  │  • notificationService.js (FCM + Notifee)            │ │
-│  │  • socketService.js      (Real-time signaling)       │ │
-│  │  • webrtcService.js      (P2P → Upgrading to SFU)    │ │
-│  │  • storageService.js     (MMKV encrypted storage)    │ │
-│  └────────────────────────────────────────────────────────┘ │
-│                           ↓                                  │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │           State Management (Zustand)                   │ │
-│  │  • authStore          • meetingStore                   │ │
-│  │  • notificationStore  • uiStore                        │ │
-│  └────────────────────────────────────────────────────────┘ │
-│                           ↓                                  │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │           Storage Layer (MMKV)                         │ │
-│  │  • Encrypted JWT tokens  • User preferences           │ │
-│  │  • FCM tokens           • Session data                │ │
-│  └────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-                        ↕ HTTPS/WSS
-┌─────────────────────────────────────────────────────────────┐
-│                  Node.js Backend Server                      │
-│                                                              │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │              Authentication Layer                      │ │
-│  │  • Firebase Admin SDK (Verify Google tokens)          │ │
-│  │  • JWT Generation & Verification                      │ │
-│  │  • Token Refresh Endpoint                             │ │
-│  └────────────────────────────────────────────────────────┘ │
-│                           ↓                                  │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │          Real-Time Signaling (Socket.io)               │ │
-│  │  • WebRTC Offer/Answer Exchange                       │ │
-│  │  • ICE Candidate Forwarding                           │ │
-│  │  • Room Management                                     │ │
-│  └────────────────────────────────────────────────────────┘ │
-│                           ↓                                  │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │         Media Server (Mediasoup SFU - In Progress)     │ │
-│  │  • Router Management                                   │ │
-│  │  • Producer/Consumer Handling                         │ │
-│  │  • Transport Management                               │ │
-│  └────────────────────────────────────────────────────────┘ │
-│                           ↓                                  │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │              Database (MongoDB)                        │ │
-│  │  • User Documents     • Session Records               │ │
-│  │  • FCM Tokens        • Call Analytics                 │ │
-│  └────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-```
+**Video:** 
+<img src="https://github.com/user-attachments/assets/f1100cb2-5022-4219-96a1-687a2c2145b8" width="400" height="250" />
 
 ---
 
@@ -252,59 +181,6 @@ sequenceDiagram
 ```
 API Request → 401 Error → Axios Interceptor → Use Refresh Token → Get New Access Token → Retry Request → Success
 ```
-
----
-
-## 📁 Project Structure
-
-```
-Twalky-Frontend/
-├── android/
-│   └── app/
-│       ├── google-services.json      # Firebase config
-│       └── src/main/AndroidManifest.xml
-├── ios/
-│   ├── GoogleService-Info.plist      # Firebase config
-│   └── Podfile
-├── src/
-│   ├── screens/
-│   │   ├── auth/
-│   │   │   └── LoginScreen.js        # Google Sign-In
-│   │   ├── meeting/
-│   │   │   ├── HomeScreen.js         # Create/Join meeting
-│   │   │   ├── JoinScreen.js         # Enter meeting code
-│   │   │   ├── PrepareScreen.js      # Camera/mic preview
-│   │   │- LiveMeetScreen.js     # Video call (upgrading)
-│   │   ├── ProfileScreen.js          # User profile & settings
-│   │   └── DeveloperScreen.js        # Debug panel
-│   ├── services/
-│   │   ├── authService.js            # Google OAuth + JWT
-│   │   ├── tokenService.js           # Token management
-│   │   ├── notificationService.js    # FCM + Notifee
-│   │   ├── socketService.js          # Socket.io client
-│   │   ├── webrtcService.js          # WebRTC (v1.0 preserved)
-│   │   ├── storageService.js         # MMKV wrapper
-│   │   └── api.js                    # HTTP client (Axios)
-│   ├── hooks/
-│   │   ├── useWebRTC.js              # WebRTC P2P hook (v1.0)
-│   │   └── useAuth.js                # Authentication hook
-│   ├── store/
-│   │   ├── authStore.js              # Zustand: Auth state
-│   │   └── meetingStore.js           # Zustand: Meeting state
-│   ├── navigation/
-│   │   └── Navigation.js             # React Navigation setup
-│   └── utils/
-│       ├── constants.js
-│       └── helpers.js
-├── docs/
-│   └── screenshots/
-│       ├── v1/                       # P2P call screenshots
-│       └── v2/                       # Current version screenshots
-├── .env                              # Environment variables
-├── package.json
-└── README.md
-```
-
 ---
 
 ## 🚀 Quick Start
@@ -348,20 +224,29 @@ npm run android  # or npm run ios
 ### 1. MMKV Storage 
 ```javascript
 // src/services/storageService.js
-import { MMKV } from 'react-native-mmkv';
+import { MMKV } from "react-native-mmkv";
 
-export const storage = new MMKV({
-  id: 'twalky-storage',
-  encryptionKey: 'your-encryption-key'
-});
+export const storage = new MMKV(
+    {
+        id: "user-storage",
+        encryptionKey: "secure-key-is-sasa"
+    }
+)
 
-export const setToken = (key, value) => {
-  storage.set(key, value);
-};
+export const mmkvstorage = {
+    setItem: (key, value) => {
+        storage.set(key, value);
+    },
+    getItem:(key)=>{
+        const value = storage.getString(key)
+        return value ?? null;
+    }
+    ,
+    removeItem: (key) => {
+        storage.delete(key);
+    }
 
-export const getToken = (key) => {
-  return storage.getString(key);
-};
+}
 ```
 
 ### 2. Auto Token Refresh (Axios Interceptor)
